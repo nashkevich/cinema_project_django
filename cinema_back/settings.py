@@ -46,6 +46,7 @@ REST_FRAMEWORK = {
     ),
 }
 MIDDLEWARE = [
+    "cinema_back.cors_middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
