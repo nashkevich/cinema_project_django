@@ -19,13 +19,18 @@ from django.urls import path
 from rest_framework import routers
 from movies import movie_views
 from user import user_views
-
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView
+)
 router = routers.DefaultRouter()
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("movie/",movie_views.MovieApiView.as_view()),
+    path("movie",movie_views.MovieApiView.as_view()),
     path("movie/<str:id>",movie_views.MovieApiView.as_view()),
-    path("register/",user_views.UserRegistrationViews.as_view())
+    path("register",user_views.UserRegistrationViews.as_view()),
+    path("api/token",TokenObtainPairView.as_view()),
+    path("api/token/refresh",TokenRefreshView.as_view())
 ]
 urlpatterns += router.urls
