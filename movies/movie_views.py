@@ -1,11 +1,15 @@
 from django.shortcuts import render
 from json import JSONDecodeError
 from django.http import JsonResponse
+from django.db.models import Q
 from .serializers import MovieSerializer
 from .models import Movie
 from rest_framework import views, status
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Create your views here.
 class MovieApiView(views.APIView):
@@ -41,6 +45,7 @@ class MovieApiView(views.APIView):
             page = request.GET.get('page')
             limit = request.GET.get('limit')
             searchQuery = request.GET.get('searchQuery')
+            searchGenres = request.GET.get('searchGenres')
             isCount = bool(request.GET.get('isCount'))
             if movie_id:
                 movies = Movie.objects.get(id=movie_id)
@@ -49,13 +54,22 @@ class MovieApiView(views.APIView):
                     return Response({"response":serializer.data,"message":"Movie found"},status=200)
                 except Movie.DoesNotExist:
                     return Response({"message":"Movie not found"},status=404)
-            elif searchQuery:
+            elif searchQuery or searchGenres:
                 try:
-                    movies = Movie.objects.filter(title__contains=searchQuery)
+                    if searchGenres and searchQuery:
+                        movies = Movie.objects.filter(title__contains=searchQuery, genres__contains=searchGenres)
+                    elif searchQuery:
+                        movies = Movie.objects.filter(title__contains=searchQuery)
+                    elif searchGenres:
+                        print(searchGenres)
+                        movies = Movie.objects.filter(genres__icontains=f'"{searchGenres}"')
+
+
                     serializer = MovieSerializer(movies,many=True)
                     return Response({"message":"Return films for query","response":serializer.data},status=200)
                 except Exception as e:
-                    return Response({"message":"Failed to return films for query","response":e},status=500)
+                    logger.error(f"Error while fetching movies: {e}")
+                    return Response({"message":"Failed to return films for query","response":str(e)},status=500)
             elif page and limit:
                 page = int(page)
                 limit = int(limit)
