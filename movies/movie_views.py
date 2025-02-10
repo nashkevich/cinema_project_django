@@ -40,6 +40,7 @@ class MovieApiView(views.APIView):
             movie_id = kwargs.get('id','')
             page = request.GET.get('page')
             limit = request.GET.get('limit')
+            searchQuery = request.GET.get('searchQuery')
             isCount = bool(request.GET.get('isCount'))
             if movie_id:
                 movies = Movie.objects.get(id=movie_id)
@@ -48,6 +49,13 @@ class MovieApiView(views.APIView):
                     return Response({"response":serializer.data,"message":"Movie found"},status=200)
                 except Movie.DoesNotExist:
                     return Response({"message":"Movie not found"},status=404)
+            elif searchQuery:
+                try:
+                    movies = Movie.objects.filter(title__contains=searchQuery)
+                    serializer = MovieSerializer(movies,many=True)
+                    return Response({"message":"Return films for query","response":serializer.data},status=200)
+                except Exception as e:
+                    return Response({"message":"Failed to return films for query","response":e},status=500)
             elif page and limit:
                 page = int(page)
                 limit = int(limit)
