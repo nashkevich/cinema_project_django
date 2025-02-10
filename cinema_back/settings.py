@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     "rest_framework_simplejwt",
     "rest_framework",
-    "movies"
+    "movies",
+    'corsheaders'
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -61,7 +62,7 @@ REST_FRAMEWORK = {
     ]
 }
 MIDDLEWARE = [
-    
+    "corsheaders.middleware.CorsMiddleware",
     "cinema_back.cors_middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -73,7 +74,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "cinema_back.urls"
-
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS =[
+    "http://localhost:5173"
+]
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
