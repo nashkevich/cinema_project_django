@@ -30,6 +30,7 @@ urlpatterns = [
     path("movie",movie_views.MovieApiView.as_view()),
     path("movie/<str:id>",movie_views.MovieApiView.as_view()),
     path("register",user_views.UserRegistrationViews.as_view()),
+    path("user_info",user_views.GetUserView.as_view()),
     path("api/token",TokenObtainPairView.as_view()),
     path("api/token/refresh",TokenRefreshView.as_view())
 ]
