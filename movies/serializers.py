@@ -8,6 +8,7 @@ class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Movie
         fields = (
+            'id',
             'title',
             'year',
             'description',
