@@ -57,13 +57,12 @@ class MovieApiView(views.APIView):
             elif searchQuery or searchGenres:
                 try:
                     if searchGenres and searchQuery:
-                        movies = Movie.objects.filter(title__contains=searchQuery, genres__contains=searchGenres)
+                        movies = Movie.objects.filter(title__contains=searchQuery, genres__incontains=searchGenres)
                     elif searchQuery:
                         movies = Movie.objects.filter(title__contains=searchQuery)
                     elif searchGenres:
                         print(searchGenres)
                         movies = Movie.objects.filter(genres__icontains=f'"{searchGenres}"')
-
 
                     serializer = MovieSerializer(movies,many=True)
                     return Response({"message":"Return films for query","response":serializer.data},status=200)
@@ -78,6 +77,7 @@ class MovieApiView(views.APIView):
                 try:
                     movies = Movie.objects.all()[index_from:index_to]
                     serializer = MovieSerializer(movies,many=True)
+                    
                     return Response({"message":f"Return movies from {index_from} to {index_to}","response":serializer.data},status=200)
                 except Exception as e:
                     return Response({"message":e},status=500)
@@ -87,6 +87,7 @@ class MovieApiView(views.APIView):
                 return Response({"message": "Return number of all movies","response":len(serializer.data)},status=200)
             else:
                 movies = Movie.objects.all()
+                movies = movies.values('id','poster','title','year')
                 serializer = MovieSerializer(movies,many=True)
                 return Response({"response":serializer.data,"message":"All movies"},status=200)
         except Exception as e:

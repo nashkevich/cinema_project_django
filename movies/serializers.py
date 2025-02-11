@@ -3,6 +3,8 @@ from rest_framework import serializers
 from rest_framework.fields import CharField, JSONField, IntegerField
 
 class MovieSerializer(serializers.ModelSerializer):
+    title = CharField()
+    year = IntegerField()
     class Meta:
         model = models.Movie
         fields = (
