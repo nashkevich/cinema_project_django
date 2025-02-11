@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from .models import LikedMoviesUser
 
 class UserRegistrationSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
@@ -22,3 +23,8 @@ class UserGetSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id','email','username']
+
+class BasketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LikedMoviesUser
+        fields = ['id','basket','user_id']

@@ -31,6 +31,7 @@ urlpatterns = [
     path("movie/<str:id>",movie_views.MovieApiView.as_view()),
     path("register",user_views.UserRegistrationViews.as_view()),
     path("user_info",user_views.GetUserView.as_view()),
+    path("user/basket",user_views.BasketUserView.as_view()),
     path("api/token",TokenObtainPairView.as_view()),
     path("api/token/refresh",TokenRefreshView.as_view())
 ]
