@@ -29,8 +29,9 @@ class GetUserView(views.APIView):
     
 class BasketUserView(views.APIView):
     def get(self,request,*args,**kwargs):
-        userId = request.GET.get('userId')
-        basket = LikedMoviesUser.objects.get(user__id=userId)
+        user = request.user
+        serializer_user = UserGetSerializer(user)
+        basket = LikedMoviesUser.objects.get(user__id=serializer_user.data['id'])
         serializer = BasketSerializer(basket)
         return Response({'message':"Get basket for user!",'response':serializer.data},status=200)
     
@@ -40,5 +41,9 @@ class BasketUserView(views.APIView):
         serializer_user = UserGetSerializer(user)
         basket_object = LikedMoviesUser.objects.get(user_id=serializer_user.data['id'])
         basket_object.basket = data.get('basket')
-        basket_object.save()
-        return Response({"message":"Success updated basket object!"},status=200)
+        serializer_basket = BasketSerializer(data=data)
+        if serializer_basket.is_valid():
+            basket_object.save()
+            return Response({"message":"Success updated basket object!"},status=200)
+        else:
+            return Response({"message":"Wrong data provided!"},status=400)

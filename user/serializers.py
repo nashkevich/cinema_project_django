@@ -25,6 +25,7 @@ class UserGetSerializer(serializers.ModelSerializer):
         fields = ['id','email','username']
 
 class BasketSerializer(serializers.ModelSerializer):
+    # basket = serializers.JSONField()
     class Meta:
         model = LikedMoviesUser
         fields = ['id','basket','user_id']
