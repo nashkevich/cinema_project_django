@@ -8,6 +8,8 @@ from rest_framework import views, status
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 import logging
+from user.serializers import UserGetSerializer,BasketSerializer
+from user.models import LikedMoviesUser
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +49,7 @@ class MovieApiView(views.APIView):
             searchQuery = request.GET.get('searchQuery')
             searchGenres = request.GET.get('searchGenres')
             isCount = bool(request.GET.get('isCount'))
+            isLiked = bool(request.GET.get("isLiked"))
             if movie_id:
                 movies = Movie.objects.get(id=movie_id)
                 try:
@@ -54,6 +57,20 @@ class MovieApiView(views.APIView):
                     return Response({"response":serializer.data,"message":"Movie found"},status=200)
                 except Movie.DoesNotExist:
                     return Response({"message":"Movie not found"},status=404)
+            elif isLiked:
+                try:
+                    data_return = []
+                    user = request.user
+                    serializer_user = UserGetSerializer(user)
+                    basket_object = LikedMoviesUser.objects.get(user_id=serializer_user.data['id'])
+                    basket_serializer = BasketSerializer(basket_object)
+                    for movie_id in basket_serializer.data['basket']:
+                        movie = Movie.objects.get(id=movie_id)
+                        movie = MovieSerializer(movie)
+                        data_return.append(movie.data)
+                    return Response({"message":"Return liked films!","response":data_return},status=200)
+                except Exception as e:
+                    return Response({"message":"error","e":str(e)},status=400)
             elif searchQuery or searchGenres:
                 try:
                     if searchGenres and searchQuery:
