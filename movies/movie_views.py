@@ -78,7 +78,6 @@ class MovieApiView(views.APIView):
                     elif searchQuery:
                         movies = Movie.objects.filter(title__contains=searchQuery)
                     elif searchGenres:
-                        print(searchGenres)
                         movies = Movie.objects.filter(genres__icontains=f'"{searchGenres}"')
 
                     serializer = MovieSerializer(movies,many=True)
